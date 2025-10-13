@@ -1,0 +1,23 @@
+.footer {
+  background: var(--text-dark);
+  background-color: #333;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  color: var(--white);
+  padding: 2rem 0;
+  margin-top: auto;
+  text-align: center;
+}
+
+.footer-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-content p {
+  margin: 0;
+  opacity: 0.8;
+}
