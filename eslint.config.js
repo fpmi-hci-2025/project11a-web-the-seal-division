@@ -8,9 +8,6 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
-    env: {
-      node: true,
-    },
     extends: [
       js.configs.recommended,
       reactHooks.configs['recommended-latest'],
@@ -24,7 +21,7 @@ export default defineConfig([
       },
       parserOptions: {
         ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
+        ecmaFeatures: { jsx: true, node: true },
         sourceType: 'module',
       },
     },
