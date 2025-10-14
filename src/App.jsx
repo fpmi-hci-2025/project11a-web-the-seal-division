@@ -6,14 +6,15 @@ import './App.css'
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/catalog" element={<Catalog />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <><div>Bookstore</div></>
+    // <Router>
+    //   <Layout>
+    //     <Routes>
+    //       <Route path="/" element={<Home />} />
+    //       <Route path="/catalog" element={<Catalog />} />
+    //     </Routes>
+    //   </Layout>
+    // </Router>
   )
 }
 
