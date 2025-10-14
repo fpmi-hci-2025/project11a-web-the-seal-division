@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "deploy": "gh-pages -d dist",
+    "fetch-swagger": "curl -L https://raw.githubusercontent.com/fpmi-hci-2025/project11a-backend-the-seal-division/main/docs/swagger.json -o public/swagger/swagger.json",
+    "generate-swagger": "node scripts/generate-swagger.js",
+    "prebuild": "npm run generate-swagger"
   },
   "dependencies": {
     "axios": "^1.5.0",

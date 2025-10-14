@@ -1,0 +1,114 @@
+name: Deploy to GitHub Pages with Swagger
+
+on:
+  push:
+    branches: [ main, development ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build with Swagger Integration
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download Swagger spec from backend
+      run: |
+        mkdir -p public/swagger
+        curl -L https://raw.githubusercontent.com/fpmi-hci-2025/project11a-backend-the-seal-division/main/docs/swagger.json -o public/swagger/swagger.json || echo "Using default swagger spec"
+        
+        if [ ! -f public/swagger/swagger.json ]; then
+          echo '{"openapi":"3.0.0","info":{"title":"BookStore API","version":"1.0.0"},"paths":{}}' > public/swagger/swagger.json
+        fi
+
+    - name: Generate API documentation page
+      run: |
+        cat > public/api-docs.html << 'EOF'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>BookStore API Documentation</title>
+            <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css">
+            <style>
+                body { margin: 0; padding: 0; }
+                #swagger-ui { padding: 20px; }
+                .topbar { display: none; }
+            </style>
+        </head>
+        <body>
+            <div id="swagger-ui"></div>
+            <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+            <script>
+                SwaggerUIBundle({
+                    url: './swagger/swagger.json',
+                    dom_id: '#swagger-ui',
+                    presets: [
+                        SwaggerUIBundle.presets.apis,
+                        SwaggerUIBundle.presets.standalone
+                    ],
+                    layout: "BaseLayout"
+                });
+            </script>
+        </body>
+        </html>
+        EOF
+
+    - name: Run linting and tests
+      run: |
+        npm run lint
+        npm run test -- --run
+
+    - name: Build application
+      run: npm run build
+      env:
+        VITE_APP_BASE_URL: /project11a-web-the-seal-division
+        VITE_API_URL: https://project11a-backend-the-seal-division.onrender.com/api
+        VITE_SWAGGER_URL: /project11a-web-the-seal-division/api-docs.html
+
+    - name: Verify build output
+      run: |
+        ls -la dist/
+        [ -f dist/index.html ] && echo "Main app built" || exit 1
+        [ -f dist/api-docs.html ] && echo "API docs built" || exit 1
+        [ -f dist/swagger/swagger.json ] && echo "Swagger spec included" || exit 1
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: ./dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
