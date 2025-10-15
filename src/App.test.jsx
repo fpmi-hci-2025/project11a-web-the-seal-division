@@ -4,6 +4,6 @@ import App from './App';
 describe('App component', () => {
   test('renders App component on the root path ("/")', () => {
     render(<App />);
-    expect(screen.getByText(/Bookstore API/i)).toBeInTheDocument();
+    expect(screen.getByText(/Bookstore/i)).toBeInTheDocument();
   });
 });
