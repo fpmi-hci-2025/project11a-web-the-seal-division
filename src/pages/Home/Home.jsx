@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import './Home.module.css'
+import APIDocsLink from '../../components/common/APIDocs/APIDocsLink'
 
 const Home = () => {
   return (
@@ -18,6 +19,7 @@ const Home = () => {
               <Link to="/catalog" className="btn btn-primary">
                 Смотреть каталог
               </Link>
+              <APIDocsLink/>
             </div>
           </div>
         </div>
