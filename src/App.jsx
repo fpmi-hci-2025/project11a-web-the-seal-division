@@ -7,7 +7,7 @@ import APIDocsLink from './components/common/APIDocs/APIDocsLink'
 
 function App() {
   return (
-    <div>Bookstore</div>
+    <><APIDocsLink /><div>Bookstore</div></>
     // <Router>
     //   <Layout>
     //     <Routes>
