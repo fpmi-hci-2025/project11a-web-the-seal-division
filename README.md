@@ -17,6 +17,15 @@ npm run build
 # Preview сборки
 npm run preview
 ```
+Либо через docker-compose:
+```bash
+### Запуск с Docker Compose
+docker-compose up -d
+
+### Проверка доступности
+curl http://localhost:3000/
+```
+
 
 # Sub modules
 
