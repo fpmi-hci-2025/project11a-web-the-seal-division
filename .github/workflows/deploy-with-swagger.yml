@@ -43,6 +43,7 @@ jobs:
 
     - name: Generate API documentation page
       run: |
+        cat public/swagger/swagger.json
         cat > public/api-docs.html << 'EOF'
         <!DOCTYPE html>
         <html>
