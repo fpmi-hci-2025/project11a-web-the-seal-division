@@ -17,8 +17,7 @@ export default defineConfig({
     outDir: 'dist',
     rollupOptions: {
       input: {
-        main: './index.html',
-        apiDocs: './api-docs.html'
+        main: './index.html'
       }
     }
   },
