@@ -77,9 +77,9 @@ jobs:
     - name: Build application
       run: npm run build
       env:
-        VITE_APP_BASE_URL: /
+        VITE_APP_BASE_URL: /project11a-web-the-seal-division
         VITE_API_URL: https://project11a-backend-the-seal-division.onrender.com/api
-        VITE_SWAGGER_URL: /api-docs.html
+        VITE_SWAGGER_URL: /project11a-web-the-seal-division/api-docs.html
 
     - name: Verify build output
       run: |

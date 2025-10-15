@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist -r https://github.com/fpmi-hci-2025/project11a-web-the-seal-division.git",
     "fetch-swagger": "curl -L https://raw.githubusercontent.com/fpmi-hci-2025/project11a-backend-the-seal-division/main/docs/swagger.json -o public/swagger/swagger.json",
     "generate-swagger": "node scripts/generate-swagger.cjs",
     "prebuild": "npm run generate-swagger"
