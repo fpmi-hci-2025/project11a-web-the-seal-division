@@ -1,0 +1,89 @@
+.sale-card {
+  background: var(--white);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 200px;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.sale-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 67, 61, 0);
+  transition: background 0.3s ease;
+  z-index: 1;
+}
+
+.sale-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.sale-card:hover::before {
+  background: rgba(17, 67, 61, 0.1);
+}
+
+.sale-card:active {
+  transform: translateY(-2px);
+}
+
+.sale-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.sale-card:hover .sale-card__image {
+  transform: scale(1.05);
+}
+
+.sale-card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: var(--white);
+  padding: 20px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.sale-card:hover .sale-card__overlay {
+  transform: translateY(0);
+}
+
+.sale-card__title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+}
+
+.sale-modal-content {
+  text-align: center;
+}
+
+.sale-modal__image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.sale-modal__description {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}

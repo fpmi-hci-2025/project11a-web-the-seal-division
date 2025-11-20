@@ -1,0 +1,205 @@
+.book-card {
+  background: var(--white);
+  border: 4px solid var(--background-color);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  position: relative;
+  height: 360px;
+  width: 100%;
+  max-width: 508px;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  z-index: 1;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-color);
+  z-index: 10;
+}
+
+.book-card:active {
+  transform: translateY(-2px);
+  z-index: 10;
+}
+
+.book-card__image-container {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.book-card__image {
+  width: 160px;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+
+.book-card:hover .book-card__image {
+  transform: scale(1.05);
+}
+
+.book-card__bookmark {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--white);
+  border: none;
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+}
+
+.book-card__bookmark:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-hover);
+}
+
+.book-card__bookmark:active {
+  transform: scale(0.95);
+}
+
+.book-card__bookmark.active {
+  background: var(--primary-color);
+}
+
+.book-card__bookmark.active svg path {
+  stroke: var(--white);
+}
+
+.book-card__info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0 0 0;
+  margin-left: 10px;
+}
+
+.book-card__title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 26px;
+  margin-bottom: 15px;
+}
+
+.book-card__author {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  margin-bottom: 15px;
+  color: var(--secondary-color);
+}
+
+.book-card__price {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  margin-bottom: 25px;
+  color: var(--primary-color);
+}
+
+.book-card__rating {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 40px;
+}
+
+.star {
+  width: 28px;
+  height: 28px;
+  color: var(--yellow);
+  font-size: 28px;
+  transition: transform 0.2s ease;
+}
+
+.book-card:hover .star {
+  transform: scale(1.1);
+}
+
+.book-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.buy-btn {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 30px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  cursor: pointer;
+  min-width: 160px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.buy-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.buy-btn:hover {
+  background-color: var(--secondary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.buy-btn:hover::before {
+  left: 100%;
+}
+
+.buy-btn:active {
+  background-color: var(--secondary-active);
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 768px) {
+  .book-card {
+    flex-direction: column;
+    height: auto;
+    text-align: center;
+  }
+  
+  .book-card__image {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .book-card__info {
+    padding: 20px 0 0 0;
+    margin-left: 0;
+  }
+}

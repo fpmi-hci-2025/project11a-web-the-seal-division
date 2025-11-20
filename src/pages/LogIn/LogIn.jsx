@@ -1,19 +1,19 @@
 import React from 'react';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
-import './Catalog.css';
+import './LogIn.css';
 
-const Catalog = () => {
+const LogIn = () => {
   return (
-    <div className="catalog-page">
+    <div className="login-page">
       <Header />
       <main className="main">
         <div className="container">
-          <section className="catalog-section">
-            <h1 className="page-title">Каталог книг</h1>
+          <section className="login-section">
+            <h1 className="page-title">Вход</h1>
             <div className="coming-soon">
               <h2>Страница в разработке</h2>
-              <p>Скоро здесь появится полный каталог наших книг</p>
+              <p>Скоро здесь появится форма входа</p>
             </div>
           </section>
         </div>
@@ -23,4 +23,4 @@ const Catalog = () => {
   );
 };
 
-export default Catalog;
+export default LogIn;

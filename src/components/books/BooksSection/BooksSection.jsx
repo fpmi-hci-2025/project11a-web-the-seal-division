@@ -1,0 +1,59 @@
+import React, { useState } from 'react';
+import { useBooks } from '../../../hooks/api/useBooks';
+import { getBooksByCategory } from '../../../utils/staticData';
+import BookCard from '../BookCard/BookCard';
+import Carousel from '../../ui/Carousel/Carousel';
+import './BooksSection.css';
+
+const BooksSection = ({ title, category }) => {
+  const { books: apiBooks, loading, error } = useBooks(category);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Используем статические данные, если API не доступно
+  const books = apiBooks.length > 0 ? apiBooks : getBooksByCategory(category);
+
+  const booksPerSlide = 2;
+  const totalSlides = Math.ceil(books.length / booksPerSlide);
+
+  const slides = Array.from({ length: totalSlides }, (_, index) => 
+    books.slice(index * booksPerSlide, (index + 1) * booksPerSlide)
+  );
+
+  const handleAllBooks = () => {
+    // Навигация на страницу каталога с фильтром по категории
+    console.log(`Navigate to all ${category} books`);
+  };
+
+  if (loading) return <div className="loading">Загрузка книг...</div>;
+  if (error) console.error('Error loading books:', error);
+
+  return (
+    <section className="books-section">
+      <h3 className="books-section__title">{title}</h3>
+      
+      {books.length > 0 ? (
+        <Carousel
+          currentSlide={currentSlide}
+          totalSlides={totalSlides}
+          onSlideChange={setCurrentSlide}
+        >
+          {slides.map((slideBooks, index) => (
+            <div key={index} className="books-slide">
+              {slideBooks.map(book => (
+                <BookCard key={book.id} book={book} />
+              ))}
+            </div>
+          ))}
+        </Carousel>
+      ) : (
+        <div className="no-books">Книги не найдены</div>
+      )}
+
+      <button className="all-books-btn" onClick={handleAllBooks}>
+        Все книги
+      </button>
+    </section>
+  );
+};
+
+export default BooksSection;
