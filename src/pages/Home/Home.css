@@ -1,0 +1,58 @@
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.hero {
+  text-align: center;
+  padding: 60px 0 0;
+}
+
+.hero__title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 64px;
+  color: var(--text-color);
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 48px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.books-main {
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 36px;
+    line-height: 48px;
+  }
+  
+  .section-title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+  
+  .container {
+    padding: 0 15px;
+  }
+}

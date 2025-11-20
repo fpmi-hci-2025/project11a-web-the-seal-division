@@ -1,19 +1,19 @@
 import React from 'react';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
-import './Catalog.css';
+import './Profile.css';
 
-const Catalog = () => {
+const Profile = () => {
   return (
-    <div className="catalog-page">
+    <div className="profile-page">
       <Header />
       <main className="main">
         <div className="container">
-          <section className="catalog-section">
-            <h1 className="page-title">Каталог книг</h1>
+          <section className="profile-section">
+            <h1 className="page-title">Профиль</h1>
             <div className="coming-soon">
               <h2>Страница в разработке</h2>
-              <p>Скоро здесь появится полный каталог наших книг</p>
+              <p>Скоро здесь появится ваш профиль</p>
             </div>
           </section>
         </div>
@@ -23,4 +23,4 @@ const Catalog = () => {
   );
 };
 
-export default Catalog;
+export default Profile;

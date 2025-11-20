@@ -1,0 +1,78 @@
+.books-section {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 40px 30px;
+  margin-bottom: 60px;
+  box-shadow: var(--shadow);
+}
+
+.books-section__title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 37px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.no-books {
+  text-align: center;
+  padding: 40px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.all-books-btn {
+  display: block;
+  margin: 0 auto;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 22px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.all-books-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.all-books-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.all-books-btn:hover::before {
+  left: 100%;
+}
+
+.all-books-btn:active {
+  background-color: var(--primary-active);
+  transform: translateY(0);
+  box-shadow: var(--shadow);
+}

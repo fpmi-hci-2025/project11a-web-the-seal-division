@@ -1,0 +1,104 @@
+/* Reset и базовые стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --background-color: #E3D9C8;
+  --primary-color: #11433D;
+  --primary-hover: #0E352F;
+  --primary-active: #092823;
+  --secondary-color: #7A6D58;
+  --secondary-hover: #6B5F4D;
+  --secondary-active: #5C5242;
+  --text-color: #251E12;
+  --white: #FFFFFF;
+  --yellow: #FFEE50;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Масштабируемые размеры */
+  --scale-factor: 0.7;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  font-size: calc(16px * var(--scale-factor));
+}
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Montserrat:wght@400;700&display=swap');
+
+/* Общие классы */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 48px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  :root {
+    --scale-factor: 0.8;
+  }
+  
+  .container {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --scale-factor: 0.9;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 10px;
+  }
+}
+
+/* Утилитарные классы */
+.text-center {
+  text-align: center;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

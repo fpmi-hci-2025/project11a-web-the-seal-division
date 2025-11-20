@@ -1,51 +1,46 @@
-import { Link } from 'react-router-dom'
-import './Home.module.css'
-import APIDocsLink from '../../components/common/APIDocs/APIDocsLink'
+import React from 'react';
+import Header from '../../components/common/Header/Header';
+import SearchFilter from '../../components/common/SearchFilter/SearchFilter';
+import HelpSection from '../../components/common/HelpSection/HelpSection';
+import SalesSection from '../../components/common/SalesSection/SalesSection';
+import BooksSection from '../../components/books/BooksSection/BooksSection';
+import Footer from '../../components/common/Footer/Footer';
+import './Home.css';
 
 const Home = () => {
   return (
     <div className="home">
-      <section className="hero">
+      <Header />
+      <main className="main">
         <div className="container">
-          <div className="hero-content">
-            <h1 className="hero-title">
-              Добро пожаловать в <span>BookStore</span>
-            </h1>
-            <p className="hero-description">
-              Откройте для себя мир увлекательных книг. От классики до современных бестселлеров - 
-              всё в одном месте.
-            </p>
-            <div className="hero-actions">
-              <Link to="/catalog" className="btn btn-primary">
-                Смотреть каталог
-              </Link>
-              <APIDocsLink/>
-            </div>
-          </div>
-        </div>
-      </section>
+          <section className="hero">
+            <h1 className="hero__title">Мир Книг</h1>
+          </section>
 
-      <section className="features">
-        <div className="container">
-          <h2>Почему выбирают нас?</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <h3>Быстрая доставка</h3>
-              <p>Доставка по всему миру в кратчайшие сроки</p>
-            </div>
-            <div className="feature-card">
-              <h3>Лучшие цены</h3>
-              <p>Конкурентные цены и регулярные акции</p>
-            </div>
-            <div className="feature-card">
-              <h3>Широкий выбор</h3>
-              <p>Сотни книг различных жанров и авторов</p>
-            </div>
-          </div>
+          <SearchFilter />
+          <HelpSection />
+          <SalesSection />
+          
+          <section className="books-main">
+            <h2 className="section-title">Книги</h2>
+            <BooksSection 
+              title="Новинки" 
+              category="new" 
+            />
+            <BooksSection 
+              title="Классика" 
+              category="classic" 
+            />
+            <BooksSection 
+              title="Фантастика" 
+              category="fantasy" 
+            />
+          </section>
         </div>
-      </section>
+      </main>
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
