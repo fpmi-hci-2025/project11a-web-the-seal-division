@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useReducer } from 'react';
 
 // Создаем контекст
 const BookContext = createContext();
@@ -32,7 +32,7 @@ const bookReducer = (state, action) => {
         favorites: state.favorites.filter(book => book.id !== action.payload)
       };
     
-    case 'ADD_TO_CART':
+    case 'ADD_TO_CART': {
       const existingItem = state.cart.find(item => item.id === action.payload.id);
       if (existingItem) {
         return {
@@ -48,7 +48,7 @@ const bookReducer = (state, action) => {
         ...state,
         cart: [...state.cart, { ...action.payload, quantity: 1 }]
       };
-    
+    }
     case 'UPDATE_CART_QUANTITY':
       return {
         ...state,
@@ -105,11 +105,4 @@ export const BookProvider = ({ children }) => {
   );
 };
 
-// Хук для использования контекста
-export const useBookContext = () => {
-  const context = useContext(BookContext);
-  if (!context) {
-    throw new Error('useBookContext must be used within a BookProvider');
-  }
-  return context;
-};
+export default BookContext;

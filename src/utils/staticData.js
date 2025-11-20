@@ -20,7 +20,7 @@ export const staticData = {
       author: "Брандис К. Цимек Х.-П.",
       image: "/project11a-web-the-seal-division/assets/images/books/new1.png",
       rating: 5,
-      price: 899,
+      price: 39,
       category: "new"
     },
     {
@@ -29,7 +29,7 @@ export const staticData = {
       author: "Кожевникова Т.",
       image: "/project11a-web-the-seal-division/assets/images/books/new2.png",
       rating: 4,
-      price: 759,
+      price: 49,
       category: "new"
     },
     {
@@ -38,7 +38,7 @@ export const staticData = {
       author: "Автор 1",
       image: "/project11a-web-the-seal-division/assets/images/books/new1.png",
       rating: 4,
-      price: 650,
+      price: 50,
       category: "new"
     },
     {
@@ -47,7 +47,7 @@ export const staticData = {
       author: "Автор 2",
       image: "/project11a-web-the-seal-division/assets/images/books/new2.png",
       rating: 5,
-      price: 820,
+      price: 25,
       category: "new"
     },
     {
@@ -56,7 +56,7 @@ export const staticData = {
       author: "Автор 1",
       image: "/project11a-web-the-seal-division/assets/images/books/new1.png",
       rating: 4,
-      price: 650,
+      price: 35,
       category: "new"
     },
     {
@@ -65,7 +65,7 @@ export const staticData = {
       author: "Автор 2",
       image: "/project11a-web-the-seal-division/assets/images/books/new2.png",
       rating: 5,
-      price: 820,
+      price: 20,
       category: "new"
     }
   ],
@@ -76,7 +76,7 @@ export const staticData = {
       author: "Булгаков М. А.",
       image: "/project11a-web-the-seal-division/assets/images/books/classic1.png",
       rating: 5,
-      price: 450,
+      price: 40,
       category: "classic"
     },
     {
@@ -85,7 +85,7 @@ export const staticData = {
       author: "Тургенев И. С.",
       image: "/project11a-web-the-seal-division/assets/images/books/classic2.png",
       rating: 5,
-      price: 380,
+      price: 38,
       category: "classic"
     },
     {
@@ -94,7 +94,7 @@ export const staticData = {
       author: "Толстой Л. Н.",
       image: "/project11a-web-the-seal-division/assets/images/books/classic1.png",
       rating: 5,
-      price: 520,
+      price: 40,
       category: "classic"
     },
     {
@@ -103,7 +103,7 @@ export const staticData = {
       author: "Достоевский Ф. М.",
       image: "/project11a-web-the-seal-division/assets/images/books/classic2.png",
       rating: 5,
-      price: 410,
+      price: 30,
       category: "classic"
     }
   ],
@@ -114,7 +114,7 @@ export const staticData = {
       author: "Фрэнк Герберт",
       image: "/project11a-web-the-seal-division/assets/images/books/fantasy1.png",
       rating: 5,
-      price: 990,
+      price: 42,
       category: "fantasy"
     },
     {
@@ -123,7 +123,7 @@ export const staticData = {
       author: "Дж. Р. Р. Толкин",
       image: "/project11a-web-the-seal-division/assets/images/books/fantasy2.png",
       rating: 5,
-      price: 1200,
+      price: 50,
       category: "fantasy"
     },
     {
@@ -132,7 +132,7 @@ export const staticData = {
       author: "Дж. К. Роулинг",
       image: "/project11a-web-the-seal-division/assets/images/books/fantasy1.png",
       rating: 5,
-      price: 890,
+      price: 45,
       category: "fantasy"
     },
     {
@@ -141,7 +141,7 @@ export const staticData = {
       author: "Джордж Мартин",
       image: "/project11a-web-the-seal-division/assets/images/books/fantasy2.png",
       rating: 4,
-      price: 950,
+      price: 30,
       category: "fantasy"
     }
   ]
