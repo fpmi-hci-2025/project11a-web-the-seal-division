@@ -147,6 +147,23 @@ export const staticData = {
   ]
 };
 
+const bookMetaById = {
+  1: { publisher: 'АСТ', topic: 'Фантастика', preorder: false, inStock: true },
+  2: { publisher: 'Эксмо', topic: 'Бизнес', preorder: false, inStock: true },
+  3: { publisher: 'Мир Книги', topic: 'Новинки', preorder: true, inStock: false },
+  4: { publisher: 'Мир Книги', topic: 'Новинки', preorder: true, inStock: false },
+  5: { publisher: 'Азбука', topic: 'Классика', preorder: false, inStock: true },
+  6: { publisher: 'Азбука', topic: 'Классика', preorder: false, inStock: true },
+  7: { publisher: 'Азбука', topic: 'Классика', preorder: false, inStock: true },
+  8: { publisher: 'Азбука', topic: 'Классика', preorder: false, inStock: true },
+  9: { publisher: 'ACT', topic: 'Фантастика', preorder: false, inStock: true },
+  10: { publisher: 'ACT', topic: 'Фэнтези', preorder: false, inStock: true },
+  11: { publisher: 'Росмэн', topic: 'Фэнтези', preorder: false, inStock: true },
+  12: { publisher: 'Эксмо', topic: 'Фэнтези', preorder: false, inStock: true },
+  13: { publisher: 'Мир Книги', topic: 'Новинки', preorder: true, inStock: false },
+  14: { publisher: 'Мир Книги', topic: 'Новинки', preorder: true, inStock: false }
+};
+
 export const getBooksByCategory = (category) => {
   switch (category) {
     case 'new':
@@ -158,4 +175,23 @@ export const getBooksByCategory = (category) => {
     default:
       return [...staticData.newBooks, ...staticData.classicBooks, ...staticData.fantasyBooks];
   }
+};
+
+export const getAllBooks = () => {
+  const all = [
+    ...staticData.newBooks,
+    ...staticData.classicBooks,
+    ...staticData.fantasyBooks
+  ];
+
+  return all.map((book) => {
+    const meta = bookMetaById[book.id] || {};
+    return {
+      ...book,
+      publisher: meta.publisher || 'Мир Книг',
+      topic: meta.topic || 'Разное',
+      preorder: Boolean(meta.preorder),
+      inStock: meta.inStock !== undefined ? meta.inStock : true
+    };
+  });
 };

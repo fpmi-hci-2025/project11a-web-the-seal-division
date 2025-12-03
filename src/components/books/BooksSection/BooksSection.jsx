@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBooks } from '../../../hooks/api/useBooks';
 import { getBooksByCategory } from '../../../utils/staticData';
 import BookCard from '../BookCard/BookCard';
@@ -6,6 +7,7 @@ import Carousel from '../../ui/Carousel/Carousel';
 import './BooksSection.css';
 
 const BooksSection = ({ title, category }) => {
+  const navigate = useNavigate();
   const { books: apiBooks, loading, error } = useBooks(category);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -20,8 +22,8 @@ const BooksSection = ({ title, category }) => {
   );
 
   const handleAllBooks = () => {
-    // Навигация на страницу каталога с фильтром по категории
-    console.log(`Navigate to all ${category} books`);
+    // Переход в каталог с фильтром по категории
+    navigate(`/catalog?categories=${category}`);
   };
 
   if (loading) return <div className="loading">Загрузка книг...</div>;

@@ -1,10 +1,11 @@
-.catalog-page,
-.book-details-page,
-.profile-page,
-.login-page {
+.catalog-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.catalog-section {
+  padding: 40px 0;
 }
 
 .page-title {
@@ -12,35 +13,89 @@
   font-weight: 700;
   font-size: 36px;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   color: var(--primary-color);
 }
 
-.catalog-section,
-.book-details-section,
-.profile-section,
-.login-section {
-  padding: 40px 0;
-  min-height: 60vh;
+.catalog-summary {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
 }
 
-.coming-soon {
+.catalog-reset-btn {
+  background: none;
+  border: 1px solid var(--secondary-color);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  color: var(--secondary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.catalog-reset-btn:hover {
+  background: var(--secondary-color);
+  color: var(--white);
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.catalog-grid .book-card {
+  flex-direction: column !important;
+  min-width: auto !important;
+  max-width: 100%;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.catalog-grid .book-card__image-container {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 15px;
+  height: auto;
+}
+
+.catalog-grid .book-card__image {
+  width: 200px;
+  height: 280px;
+  object-fit: cover;
+  max-width: 100%;
+}
+
+.catalog-grid .book-card__info {
+  padding: 0 !important;
+  margin-left: 0 !important;
+  width: 100%;
+}
+
+.catalog-grid .book-card__actions {
+  justify-content: center;
+  width: 100%;
+}
+
+.catalog-empty {
   text-align: center;
   padding: 60px 20px;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.coming-soon h2 {
-  font-family: 'Montserrat', sans-serif;
+.catalog-empty h2 {
   font-size: 24px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   color: var(--text-color);
 }
 
-.coming-soon p {
-  font-family: 'Montserrat', sans-serif;
+.catalog-empty p {
   font-size: 16px;
   color: var(--secondary-color);
 }
@@ -48,5 +103,11 @@
 @media (max-width: 768px) {
   .page-title {
     font-size: 28px;
+  }
+
+  .catalog-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }

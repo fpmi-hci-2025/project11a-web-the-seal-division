@@ -9,6 +9,7 @@ const initialState = {
   cart: [],
   books: [],
   sales: [],
+  reviews: {}, // bookId -> array of reviews
   loading: false,
   error: null
 };
@@ -64,6 +65,36 @@ const bookReducer = (state, action) => {
         ...state,
         cart: state.cart.filter(item => item.id !== action.payload)
       };
+
+    case 'CLEAR_CART':
+      return {
+        ...state,
+        cart: []
+      };
+
+    case 'ADD_REVIEW': {
+      const { bookId, review } = action.payload;
+      const bookReviews = state.reviews[bookId] || [];
+      return {
+        ...state,
+        reviews: {
+          ...state.reviews,
+          [bookId]: [...bookReviews, review]
+        }
+      };
+    }
+
+    case 'DELETE_REVIEW': {
+      const { bookId, reviewId } = action.payload;
+      const bookReviews = state.reviews[bookId] || [];
+      return {
+        ...state,
+        reviews: {
+          ...state.reviews,
+          [bookId]: bookReviews.filter((r) => r.id !== reviewId)
+        }
+      };
+    }
     
     case 'SET_BOOKS':
       return {

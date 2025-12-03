@@ -1,0 +1,53 @@
+.buyers-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.buyers-section {
+  padding: 40px 0;
+}
+
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: var(--primary-color);
+}
+
+.buyers-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.buyers-item {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.buyers-item h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.buyers-item p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.buyers-item p:last-child {
+  margin-bottom: 0;
+}
+

@@ -1,18 +1,24 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBookContext } from '../../context/useBookContext';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
+import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import { formatPrice } from '../../utils/helpers';
 import './Cart.css';
 
 const Cart = () => {
+  const navigate = useNavigate();
   const { state, dispatch } = useBookContext();
 
   const updateQuantity = (bookId, newQuantity) => {
     if (newQuantity < 1) {
       dispatch({ type: 'REMOVE_FROM_CART', payload: bookId });
     } else {
-      dispatch({ type: 'ADD_TO_CART', payload: { id: bookId, quantity: newQuantity } });
+      dispatch({
+        type: 'UPDATE_CART_QUANTITY',
+        payload: { bookId, quantity: newQuantity }
+      });
     }
   };
 
@@ -28,11 +34,22 @@ const Cart = () => {
     return state.cart.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const handleCheckout = () => {
+    if (state.cart.length === 0) return;
+    navigate('/checkout');
+  };
+
   return (
     <div className="cart-page">
       <Header />
       <main className="main">
         <div className="container">
+          <Breadcrumbs
+            items={[
+              { label: 'Главная', path: '/' },
+              { label: 'Корзина' }
+            ]}
+          />
           <section className="cart-section">
             <h1 className="page-title">Корзина</h1>
             {state.cart.length === 0 ? (
@@ -91,7 +108,7 @@ const Cart = () => {
                     <span>Общая сумма</span>
                     <span>{formatPrice(getTotalPrice())}</span>
                   </div>
-                  <button className="checkout-btn">
+                  <button className="checkout-btn" onClick={handleCheckout}>
                     Оформить заказ
                   </button>
                 </div>

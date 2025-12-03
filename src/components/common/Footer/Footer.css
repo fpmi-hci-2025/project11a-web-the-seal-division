@@ -34,7 +34,8 @@
   text-align: left;
 }
 
-.footer__links-column a {
+.footer__links-column a,
+.footer__link {
   color: var(--white);
   text-decoration: none;
   font-family: 'Montserrat', sans-serif;
@@ -44,9 +45,13 @@
   transition: all 0.3s ease;
   padding: 5px 0;
   position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
 }
 
-.footer__links-column a::after {
+.footer__link::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -57,13 +62,14 @@
   transition: width 0.3s ease;
 }
 
-.footer__links-column a:hover {
+.footer__link:hover {
   transform: translateX(5px);
 }
 
-.footer__links-column a:hover::after {
+.footer__link:hover::after {
   width: 100%;
 }
+
 
 @media (max-width: 768px) {
   .footer__content {
