@@ -2,6 +2,7 @@ import React from 'react';
 import { useBookContext } from '../../context/useBookContext';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
+import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import BookCard from '../../components/books/BookCard/BookCard';
 import './Favourites.css';
 
@@ -13,6 +14,12 @@ const Favourites = () => {
       <Header />
       <main className="main">
         <div className="container">
+          <Breadcrumbs
+            items={[
+              { label: 'Главная', path: '/' },
+              { label: 'Избранное' }
+            ]}
+          />
           <section className="favourites-section">
             <h1 className="page-title">Избранное</h1>
             {state.favorites.length === 0 ? (
@@ -22,7 +29,7 @@ const Favourites = () => {
               </div>
             ) : (
               <div className="favourites-grid">
-                {state.favorites.map(book => (
+                {state.favorites.map((book) => (
                   <BookCard key={book.id} book={book} />
                 ))}
               </div>

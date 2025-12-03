@@ -6,9 +6,9 @@
   display: flex;
   gap: 20px;
   position: relative;
-  height: 360px;
+  height: auto;
   width: 100%;
-  max-width: 508px;
+  min-width: 500px;
   margin: 0 auto;
   transition: all 0.3s ease;
   box-shadow: var(--shadow);
@@ -191,6 +191,7 @@
     flex-direction: column;
     height: auto;
     text-align: center;
+    min-width: auto;
   }
   
   .book-card__image {

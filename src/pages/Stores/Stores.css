@@ -1,0 +1,58 @@
+.stores-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.stores-section {
+  padding: 40px 0;
+}
+
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: var(--primary-color);
+}
+
+.stores-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.store-item {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.store-item h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.store-item p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 10px;
+  color: var(--text-color);
+}
+
+.store-item p:last-child {
+  margin-bottom: 0;
+}
+
+.store-item strong {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+

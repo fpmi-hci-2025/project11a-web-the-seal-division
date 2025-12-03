@@ -1,18 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSales } from '../../../hooks/api/useSales';
 import { staticData } from '../../../utils/staticData';
 import SaleCard from '../../ui/SaleCard/SaleCard';
 import './SalesSection.css';
 
 const SalesSection = () => {
+  const navigate = useNavigate();
   const { sales, loading, error } = useSales();
   
   // Используем статические данные, если API не доступно
   const displaySales = sales.length > 0 ? sales : staticData.sales;
 
   const handleAllSales = () => {
-    // Навигация на страницу всех акций
-    console.log('Navigate to all sales');
+    navigate('/sales');
   };
 
   if (loading) return <div className="loading">Загрузка акций...</div>;

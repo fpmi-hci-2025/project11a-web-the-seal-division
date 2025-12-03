@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBookContext } from '../../../context/useBookContext';
 import { formatPrice } from '../../../utils/helpers';
 import './BookCard.css';
 
 const BookCard = ({ book }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const { dispatch } = useBookContext();
+  const navigate = useNavigate();
+  const { state, dispatch } = useBookContext();
+
+  const isFavorite = state.favorites.some((favBook) => favBook.id === book.id);
 
   const handleFavoriteToggle = () => {
     if (isFavorite) {
@@ -13,11 +16,11 @@ const BookCard = ({ book }) => {
     } else {
       dispatch({ type: 'ADD_TO_FAVORITES', payload: book });
     }
-    setIsFavorite(!isFavorite);
   };
 
-  const handleBuy = () => {
-    dispatch({ type: 'ADD_TO_CART', payload: book });
+  const handleDetails = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/book/${book.id}`);
   };
 
   const renderStars = (rating) => {
@@ -53,8 +56,8 @@ const BookCard = ({ book }) => {
           {renderStars(book.rating)}
         </div>
         <div className="book-card__actions">
-          <button className="buy-btn" onClick={handleBuy}>
-            Купить
+          <button className="buy-btn" onClick={handleDetails}>
+            Подробнее
           </button>
         </div>
       </div>

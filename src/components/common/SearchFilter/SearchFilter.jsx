@@ -8,10 +8,26 @@ const SearchFilter = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleSearch = () => {
+  const buildQueryString = (extraParams = {}) => {
+    const params = new URLSearchParams();
+
     if (searchTerm.trim()) {
-      navigate(`/catalog?search=${encodeURIComponent(searchTerm)}`);
+      params.set('search', searchTerm.trim());
     }
+
+    Object.entries(extraParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== '' && value !== null) {
+        params.set(key, String(value));
+      }
+    });
+
+    const query = params.toString();
+    return query ? `?${query}` : '';
+  };
+
+  const handleSearch = () => {
+    const query = buildQueryString();
+    navigate(`/catalog${query}`);
   };
 
   const handleKeyPress = (e) => {
@@ -29,9 +45,21 @@ const SearchFilter = () => {
   };
 
   const handleApplyFilters = (filters) => {
-    console.log('Applied filters:', filters);
-    // Здесь будет логика применения фильтров
-    // Например, обновление состояния или запрос к API
+    const activeCategories = Object.entries(filters.categories)
+      .filter(([, checked]) => checked)
+      .map(([key]) => key)
+      .join(',');
+
+    const query = buildQueryString({
+      categories: activeCategories,
+      minPrice: filters.priceRange.min,
+      maxPrice: filters.priceRange.max,
+      rating: filters.rating !== '0' ? filters.rating : undefined,
+      inStock: filters.availability.inStock ? '1' : undefined,
+      preOrder: filters.availability.preOrder ? '1' : undefined
+    });
+
+    navigate(`/catalog${query}`);
   };
 
   return (
@@ -40,7 +68,7 @@ const SearchFilter = () => {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Поиск книг..."
+            placeholder="Поиск книг по названию, автору, тематике или издательству..."
             className="search-bar__input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

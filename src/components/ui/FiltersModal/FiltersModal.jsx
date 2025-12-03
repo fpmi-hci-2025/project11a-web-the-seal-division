@@ -117,7 +117,7 @@ const FiltersModal = ({ isOpen, onClose, onApplyFilters }) => {
 
           {/* Цена */}
           <div className="filters-section">
-            <h3 className="filters-section__title">Цена, ₽</h3>
+            <h3 className="filters-section__title">Цена, BYN</h3>
             <div className="price-range">
               <div className="price-inputs">
                 <input
