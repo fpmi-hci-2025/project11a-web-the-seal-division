@@ -1,16 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSales } from '../../../hooks/api/useSales';
-import { staticData } from '../../../utils/staticData';
 import SaleCard from '../../ui/SaleCard/SaleCard';
 import './SalesSection.css';
 
 const SalesSection = () => {
   const navigate = useNavigate();
   const { sales, loading, error } = useSales();
-  
-  // Используем статические данные, если API не доступно
-  const displaySales = sales.length > 0 ? sales : staticData.sales;
 
   const handleAllSales = () => {
     navigate('/sales');
@@ -23,7 +19,7 @@ const SalesSection = () => {
     <section className="sales-section">
       <h2 className="section-title">Акции</h2>
       <div className="sales-grid">
-        {displaySales.map(sale => (
+        {sales.map((sale) => (
           <SaleCard key={sale.id} sale={sale} />
         ))}
       </div>

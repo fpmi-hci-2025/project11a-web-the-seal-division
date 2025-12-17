@@ -11,6 +11,7 @@ import Register from './pages/Register/Register';
 import Checkout from './pages/Checkout/Checkout';
 import SalesPage from './pages/Sales/SalesPage';
 import AdminAddBook from './pages/AdminAddBook/AdminAddBook';
+import AdminOrders from './pages/AdminOrders/AdminOrders';
 import About from './pages/About/About';
 import Stores from './pages/Stores/Stores';
 import Delivery from './pages/Delivery/Delivery';
@@ -86,6 +87,14 @@ function App() {
                 element={(
                   <AdminRoute>
                     <AdminAddBook />
+                  </AdminRoute>
+                )}
+              />
+              <Route
+                path="/admin/orders"
+                element={(
+                  <AdminRoute>
+                    <AdminOrders />
                   </AdminRoute>
                 )}
               />

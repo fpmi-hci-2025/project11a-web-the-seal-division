@@ -1,15 +1,18 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
 import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import BookCard from '../../components/books/BookCard/BookCard';
-import { getAllBooks } from '../../utils/staticData';
+import { apiService } from '../../services/apiService';
 import './Catalog.css';
 
 const Catalog = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [allBooks, setAllBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const query = useMemo(() => new URLSearchParams(location.search), [location.search]);
 
@@ -30,7 +33,40 @@ const Catalog = () => {
     .map((c) => c.trim())
     .filter(Boolean);
 
-  const allBooks = useMemo(() => getAllBooks(), []);
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getAllBooks();
+        setAllBooks(
+          Array.isArray(data)
+            ? data.map((book) => ({
+                id: book.id,
+                title: book.title,
+                author: book.author,
+                price: book.price,
+                rating: Number(book.rating) || 0,
+                category: book.category?.name || book.category || 'other',
+                image:
+                  book.link ||
+                  '/project11a-web-the-seal-division/assets/images/books/new1.png',
+                publisher: book.publisher?.name || book.publisher || '',
+                topic: book.category?.name || '',
+                preorder: Boolean(book.preorder),
+                inStock: true
+              }))
+            : []
+        );
+      } catch (e) {
+        console.error('Error fetching books for catalog:', e);
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
+  }, []);
 
   const filteredBooks = useMemo(() => {
     return allBooks.filter((book) => {
@@ -83,6 +119,11 @@ const Catalog = () => {
           />
           <section className="catalog-section">
             <h1 className="page-title">Каталог книг</h1>
+
+            {loading && <div className="catalog-loading">Загрузка книг...</div>}
+            {error && !filteredBooks.length && (
+              <div className="catalog-error">Не удалось загрузить книги.</div>
+            )}
 
             <div className="catalog-summary">
               <span>

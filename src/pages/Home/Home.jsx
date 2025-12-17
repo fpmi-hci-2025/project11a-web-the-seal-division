@@ -5,9 +5,12 @@ import HelpSection from '../../components/common/HelpSection/HelpSection';
 import SalesSection from '../../components/common/SalesSection/SalesSection';
 import BooksSection from '../../components/books/BooksSection/BooksSection';
 import Footer from '../../components/common/Footer/Footer';
+import { useCategories } from '../../hooks/api/useCategories';
 import './Home.css';
 
 const Home = () => {
+  const { categories, loading, error } = useCategories();
+
   return (
     <div className="home">
       <Header />
@@ -23,18 +26,19 @@ const Home = () => {
           
           <section className="books-main">
             <h2 className="section-title">Книги</h2>
-            <BooksSection 
-              title="Новинки" 
-              category="new" 
-            />
-            <BooksSection 
-              title="Классика" 
-              category="classic" 
-            />
-            <BooksSection 
-              title="Фантастика" 
-              category="fantasy" 
-            />
+
+            {loading && <div className="home-loading">Загрузка категорий...</div>}
+            {error && !categories.length && (
+              <div className="home-error">Не удалось загрузить категории.</div>
+            )}
+
+            {categories.map((category) => (
+              <BooksSection
+                key={category.id}
+                title={category.name}
+                category={category.name}
+              />
+            ))}
           </section>
         </div>
       </main>

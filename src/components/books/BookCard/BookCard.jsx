@@ -17,7 +17,7 @@ const BookCard = ({ book }) => {
       dispatch({ type: 'ADD_TO_FAVORITES', payload: book });
     }
   };
-
+  
   const handleDetails = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/book/${book.id}`);
@@ -51,7 +51,20 @@ const BookCard = ({ book }) => {
       <div className="book-card__info">
         <h4 className="book-card__title">{book.title}</h4>
         <p className="book-card__author">{book.author}</p>
-        <div className="book-card__price">{formatPrice(book.price)}</div>
+        <div className="book-card__price">
+          {book.oldPrice && Number(book.oldPrice) > Number(book.price) ? (
+            <>
+              <span className="book-card__price-old">
+                {formatPrice(Number(book.oldPrice))}
+              </span>
+              <span className="book-card__price-new">
+                {formatPrice(Number(book.price))}
+              </span>
+            </>
+          ) : (
+            formatPrice(Number(book.price))
+          )}
+        </div>
         <div className="book-card__rating">
           {renderStars(book.rating)}
         </div>

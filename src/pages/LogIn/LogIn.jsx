@@ -14,12 +14,12 @@ const LogIn = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const user = login({ email, password });
+      const user = await login({ email, password });
       if (user.role === 'admin') {
         navigate('/admin/add-book');
       } else {

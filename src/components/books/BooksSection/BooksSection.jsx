@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBooks } from '../../../hooks/api/useBooks';
-import { getBooksByCategory } from '../../../utils/staticData';
 import BookCard from '../BookCard/BookCard';
 import Carousel from '../../ui/Carousel/Carousel';
 import './BooksSection.css';
 
 const BooksSection = ({ title, category }) => {
   const navigate = useNavigate();
-  const { books: apiBooks, loading, error } = useBooks(category);
+  const { books, loading, error } = useBooks(category);
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Используем статические данные, если API не доступно
-  const books = apiBooks.length > 0 ? apiBooks : getBooksByCategory(category);
 
   const booksPerSlide = 2;
   const totalSlides = Math.ceil(books.length / booksPerSlide);
