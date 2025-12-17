@@ -66,6 +66,20 @@
   margin: 12px 0;
 }
 
+.book-details__price-old {
+  font-size: 16px;
+  font-weight: 500;
+  color: #999999;
+  text-decoration: line-through;
+  margin-right: 10px;
+}
+
+.book-details__price-new {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e63946;
+}
+
 .book-details__availability {
   font-size: 14px;
   margin-bottom: 16px;

@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
 import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import { useBookContext } from '../../context/useBookContext';
 import { useAuth } from '../../context/AuthContext';
-import { getAllBooks } from '../../utils/staticData';
+import { apiService } from '../../services/apiService';
 import { formatPrice } from '../../utils/helpers';
 import './BookDetails.css';
 
@@ -18,10 +18,39 @@ const BookDetails = () => {
   const [reviewRating, setReviewRating] = useState(5);
   const [subscribeMessage, setSubscribeMessage] = useState('');
   const [subscribeError, setSubscribeError] = useState('');
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const book = useMemo(() => {
-    const all = getAllBooks();
-    return all.find((b) => String(b.id) === String(id));
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getBookById(id);
+        setBook({
+          id: data.id,
+          title: data.title,
+          author: data.author,
+          price: data.price,
+          rating: Number(data.rating) || 0,
+          category: data.category?.name || data.category || 'other',
+          image:
+            data.link ||
+            '/project11a-web-the-seal-division/assets/images/books/new1.png',
+          publisher: data.publisher?.name || data.publisher || '',
+          topic: data.category?.name || '',
+          preorder: Boolean(data.preorder),
+          inStock: true
+        });
+      } catch (e) {
+        console.error('Error fetching book details:', e);
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBook();
   }, [id]);
 
   const bookId = book ? book.id : null;
@@ -35,7 +64,23 @@ const BookDetails = () => {
     ? state.favorites.some((fav) => String(fav.id) === String(book.id))
     : false;
 
-  if (!book) {
+  if (loading) {
+    return (
+      <div className="book-details-page">
+        <Header />
+        <main className="main">
+          <div className="container">
+            <section className="book-details-section">
+              <h1 className="page-title">Загрузка книги...</h1>
+            </section>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!book || error) {
     return (
       <div className="book-details-page">
         <Header />
@@ -152,7 +197,20 @@ const BookDetails = () => {
                 <p className="book-details__meta">
                   Тематика: <strong>{book.topic}</strong>
                 </p>
-                <p className="book-details__price">{formatPrice(book.price)}</p>
+                <p className="book-details__price">
+                  {book.oldPrice && Number(book.oldPrice) > Number(book.price) ? (
+                    <>
+                      <span className="book-details__price-old">
+                        {formatPrice(Number(book.oldPrice))}
+                      </span>
+                      <span className="book-details__price-new">
+                        {formatPrice(Number(book.price))}
+                      </span>
+                    </>
+                  ) : (
+                    formatPrice(Number(book.price))
+                  )}
+                </p>
                 <p className="book-details__availability">
                   {book.inStock
                     ? 'В наличии'

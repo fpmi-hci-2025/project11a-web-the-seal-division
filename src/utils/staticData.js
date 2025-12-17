@@ -20,7 +20,8 @@ export const staticData = {
       author: "Брандис К. Цимек Х.-П.",
       image: "/project11a-web-the-seal-division/assets/images/books/new1.png",
       rating: 5,
-      price: 39,
+      price: 29,
+      oldPrice: 39,
       category: "new"
     },
     {
@@ -29,7 +30,8 @@ export const staticData = {
       author: "Кожевникова Т.",
       image: "/project11a-web-the-seal-division/assets/images/books/new2.png",
       rating: 4,
-      price: 49,
+      price: 39,
+      oldPrice: 49,
       category: "new"
     },
     {

@@ -65,12 +65,20 @@ const Header = () => {
               Акции
             </button>
             {isAuthenticated && user?.role === 'admin' && (
-              <button
-                className="header-link header-link--admin"
-                onClick={() => navigate('/admin/add-book')}
-              >
-                Админ: добавить книгу
-              </button>
+              <>
+                <button
+                  className="header-link header-link--admin"
+                  onClick={() => navigate('/admin/add-book')}
+                >
+                  Админ: добавить книгу
+                </button>
+                <button
+                  className="header-link header-link--admin"
+                  onClick={() => navigate('/admin/orders')}
+                >
+                  Админ: заказы
+                </button>
+              </>
             )}
           </div>
           <div className="header__right">

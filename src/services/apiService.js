@@ -1,6 +1,6 @@
 class ApiService {
   constructor() {
-    this.baseURL = 'https://project11a-backend-the-seal-division.onrender.com/api';
+    this.baseURL = 'https://project11a-backend-the-seal-division.onrender.com';
     this.cache = new Map();
   }
 
@@ -8,6 +8,7 @@ class ApiService {
     try {
       const url = `${this.baseURL}${endpoint}`;
       const cacheKey = url + JSON.stringify(options);
+      console.log('API Request to:', url); 
       
       if (this.cache.has(cacheKey)) {
         return this.cache.get(cacheKey);
@@ -34,9 +35,16 @@ class ApiService {
     }
   }
 
+  // КНИГИ
+  async getAllBooks() {
+    return this.request('/books/all');
+  }
+
   async getBooks(params = {}) {
+    // Сохраняем метод для обратной совместимости, проксируя на /books/all
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/books${queryString ? `?${queryString}` : ''}`);
+    const base = '/books/all';
+    return this.request(`${base}${queryString ? `?${queryString}` : ''}`);
   }
 
   async getBookById(id) {
@@ -45,24 +53,29 @@ class ApiService {
 
   async getBooksByCategory(category, params = {}) {
     const queryString = new URLSearchParams(params).toString();
-    return this.request(`/books/category/${category}${queryString ? `?${queryString}` : ''}`);
+    // В swagger путь /books/categories/{category}
+    return this.request(
+      `/books/categories/${encodeURIComponent(category)}${queryString ? `?${queryString}` : ''}`
+    );
   }
 
+  // КАТЕГОРИИ
   async getCategories() {
-    return this.request('/categories');
+    return this.request('/categories/all');
   }
 
+  // СКИДКИ (акции)
   async getSales() {
-    return this.request('/sales');
-  }
-
-  async getSaleById(id) {
-    return this.request(`/sales/${id}`);
-  }
-
-  async searchBooks(query, params = {}) {
-    const searchParams = new URLSearchParams({ q: query, ...params });
-    return this.request(`/search?${searchParams}`);
+    // Используем /discounts/all и маппим к сущности Sale фронтенда
+    const discounts = await this.request('/discounts/all');
+    return discounts.map((d) => ({
+      id: d.id,
+      title: d.title,
+      description: d.description,
+      percentage: d.percentage,
+      // Плейсхолдер-картинка для акций, т.к. API не возвращает изображение
+      image: '/project11a-web-the-seal-division/assets/images/sales/sale1.jpg'
+    }));
   }
 }
 

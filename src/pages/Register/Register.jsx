@@ -17,7 +17,7 @@ const Register = () => {
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -27,7 +27,7 @@ const Register = () => {
     }
 
     try {
-      register({ name, email, password, phone });
+      await register({ name, email, password, phone });
       navigate('/profile');
     } catch (err) {
       setError(err.message || 'Ошибка регистрации. Попробуйте ещё раз.');
