@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
 import { apiService } from '../../services/apiService';
-import { formatPrice } from '../../utils/helpers';
 import './EditBook.css';
 
 const EditBook = () => {
@@ -121,15 +120,6 @@ const EditBook = () => {
 
     // Имитация сохранения (без реального обновления API)
     setTimeout(() => {
-      const updatedBook = {
-        ...book,
-        ...formData,
-        price: parseFloat(formData.price),
-        rating: parseFloat(formData.rating),
-        year: formData.year ? parseInt(formData.year, 10) : null,
-        pages: formData.pages ? parseInt(formData.pages, 10) : null,
-        stockCount: formData.stockCount ? parseInt(formData.stockCount, 10) : 0
-      };
 
       setIsSaving(false);
       alert('Книга успешно обновлена!');
