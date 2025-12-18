@@ -26,7 +26,7 @@ const Checkout = () => {
     [state.cart]
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -42,22 +42,24 @@ const Checkout = () => {
     }
 
     const order = {
-      id: Date.now(),
-      date: new Date().toISOString(),
       total,
       address,
       paymentMethod: 'Карта',
-      status: 'Оплачен (симуляция)',
+      status: 'новый',
       items: state.cart
     };
 
-    addOrder(order);
-    dispatch({ type: 'CLEAR_CART' });
-
-    setSuccess('Оплата успешно выполнена (симуляция). Заказ добавлен в историю.');
-    setTimeout(() => {
-      navigate('/profile');
-    }, 800);
+    try {
+      await addOrder(order);
+      dispatch({ type: 'CLEAR_CART' });
+      setSuccess('Оплата успешно выполнена. Заказ создан.');
+      setTimeout(() => {
+        navigate('/profile');
+      }, 800);
+    } catch (err) {
+      console.error('Failed to create order:', err);
+      setError('Не удалось оформить заказ. Попробуйте позже.');
+    }
   };
 
   return (

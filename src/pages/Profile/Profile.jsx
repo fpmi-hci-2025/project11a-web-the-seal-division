@@ -1,16 +1,57 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
 import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import { useAuth } from '../../context/AuthContext';
 import { formatPrice } from '../../utils/helpers';
+import { apiService } from '../../services/apiService';
 import './Profile.css';
 
 const Profile = () => {
   const { user, markNotificationsRead } = useAuth();
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [ordersError, setOrdersError] = useState(null);
 
   const notifications = user?.notifications || [];
   const hasNotifications = notifications.length > 0;
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!user) return;
+      try {
+        setLoadingOrders(true);
+        const data = await apiService.getUserOrders(user.id);
+        const mapped = Array.isArray(data)
+          ? data.map((o) => {
+              let items = [];
+              try {
+                items = o.items ? JSON.parse(o.items) : [];
+              } catch {
+                items = [];
+              }
+              return {
+                id: o.id,
+                total: o.total_amount,
+                status: o.status || 'новый',
+                items
+              };
+            })
+          : [];
+        setOrders(mapped);
+      } catch (e) {
+        console.error('Failed to load user orders', e);
+        setOrdersError(e.message);
+      } finally {
+        setLoadingOrders(false);
+      }
+    };
+
+    fetchOrders();
+  }, [user]);
+
+  const getItemsCount = (items) =>
+    items.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
   return (
     <div className="profile-page">
@@ -35,27 +76,31 @@ const Profile = () => {
 
               <div className="profile-orders">
                 <h2>История заказов</h2>
-                {!user?.orders || user.orders.length === 0 ? (
+                {loadingOrders && <p className="profile-orders__empty">Загрузка заказов...</p>}
+                {ordersError && !orders.length && (
+                  <p className="profile-orders__empty">Не удалось загрузить заказы.</p>
+                )}
+                {!loadingOrders && orders.length === 0 && !ordersError ? (
                   <p className="profile-orders__empty">
                     У вас пока нет заказов. Добавьте книги в корзину и оформите первый заказ!
                   </p>
-                ) : (
+                ) : null}
+
+                {orders.length > 0 && (
                   <table className="orders-table">
                     <thead>
                       <tr>
                         <th>Номер</th>
-                        <th>Дата</th>
                         <th>Товары</th>
                         <th>Сумма</th>
                         <th>Статус</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {user.orders.map((order) => (
+                      {orders.map((order) => (
                         <tr key={order.id}>
                           <td>#{order.id}</td>
-                          <td>{new Date(order.date).toLocaleString('ru-RU')}</td>
-                          <td>{order.items.reduce((sum, i) => sum + i.quantity, 0)}</td>
+                          <td>{getItemsCount(order.items)}</td>
                           <td>{formatPrice(order.total)}</td>
                           <td>{order.status}</td>
                         </tr>

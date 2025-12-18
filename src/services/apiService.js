@@ -77,6 +77,66 @@ class ApiService {
       image: '/project11a-web-the-seal-division/assets/images/sales/sale1.jpg'
     }));
   }
+
+  // АВТОРИЗАЦИЯ / ПОЛЬЗОВАТЕЛИ
+  async login(credentials) {
+    // credentials: { email, password }
+    return this.request('/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials)
+    });
+  }
+
+  async registerUser(user) {
+    // user соответствует entities.User
+    return this.request('/users', {
+      method: 'POST',
+      body: JSON.stringify(user)
+    });
+  }
+
+  // ЗАКАЗЫ
+  async createOrder(order) {
+    // order соответствует entities.Orders
+    return this.request('/orders', {
+      method: 'POST',
+      body: JSON.stringify(order)
+    });
+  }
+
+  async getAllOrders() {
+    return this.request('/orders/all');
+  }
+
+  async getUserOrders(userId) {
+    return this.request(`/orders/user/${userId}`);
+  }
+
+  async updateOrderStatus(orderId, status) {
+    // Предполагаем поддержку частичного обновления статуса на бэке
+    return this.request(`/orders/${orderId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status })
+    });
+  }
+
+  // ОТЗЫВЫ
+  async getReviewsByBookId(bookId) {
+    return this.request(`/books/reviews/book/${bookId}`);
+  }
+
+  async createReview(bookId, review) {
+    return this.request(`/books/reviews/${bookId}`, {
+      method: 'POST',
+      body: JSON.stringify(review)
+    });
+  }
+
+  async deleteReview(reviewId) {
+    return this.request(`/books/reviews/${reviewId}`, {
+      method: 'DELETE'
+    });
+  }
 }
 
 export const apiService = new ApiService();

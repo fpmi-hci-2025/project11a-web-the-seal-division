@@ -19,6 +19,7 @@ const BookDetails = () => {
   const [subscribeMessage, setSubscribeMessage] = useState('');
   const [subscribeError, setSubscribeError] = useState('');
   const [book, setBook] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,9 +40,26 @@ const BookDetails = () => {
             '/project11a-web-the-seal-division/assets/images/books/new1.png',
           publisher: data.publisher?.name || data.publisher || '',
           topic: data.category?.name || '',
+          description: data.description || '',
           preorder: Boolean(data.preorder),
           inStock: true
         });
+
+        // Загрузка отзывов для книги
+        const reviewsData = await apiService.getReviewsByBookId(data.id);
+        const mappedReviews = Array.isArray(reviewsData)
+          ? reviewsData.map((r) => ({
+              id: r.id,
+              userId: r.user_id,
+              userName: r.user
+                ? `${r.user.first_name || ''} ${r.user.last_name || ''}`.trim()
+                : 'Пользователь',
+              rating: Number(r.rating) || 0,
+              text: r.comment,
+              date: new Date().toISOString()
+            }))
+          : [];
+        setReviews(mappedReviews);
       } catch (e) {
         console.error('Error fetching book details:', e);
         setError(e.message);
@@ -54,7 +72,6 @@ const BookDetails = () => {
   }, [id]);
 
   const bookId = book ? book.id : null;
-  const reviews = (bookId && state.reviews[bookId]) || [];
 
   const isInCart = book
     ? state.cart.some((item) => String(item.id) === String(book.id))
@@ -127,34 +144,43 @@ const BookDetails = () => {
     }
   };
 
-  const handleAddReview = (e) => {
+  const handleAddReview = async (e) => {
     e.preventDefault();
     if (!user || !bookId || !reviewText.trim()) return;
 
-    const newReview = {
-      id: Date.now(),
-      userId: user.id,
-      userName: user.name,
-      rating: Number(reviewRating),
-      text: reviewText.trim(),
-      date: new Date().toISOString()
+    const reviewPayload = {
+      book_id: bookId,
+      user_id: user.id,
+      comment: reviewText.trim(),
+      rating: String(reviewRating)
     };
 
-    dispatch({
-      type: 'ADD_REVIEW',
-      payload: { bookId, review: newReview }
-    });
-
-    setReviewText('');
-    setReviewRating(5);
+    try {
+      const created = await apiService.createReview(bookId, reviewPayload);
+      const mapped = {
+        id: created.id,
+        userId: created.user_id,
+        userName: user.name,
+        rating: Number(created.rating) || Number(reviewRating),
+        text: created.comment,
+        date: new Date().toISOString()
+      };
+      setReviews((prev) => [...prev, mapped]);
+      setReviewText('');
+      setReviewRating(5);
+    } catch (e) {
+      console.error('Failed to create review', e);
+    }
   };
 
-  const handleDeleteReview = (reviewId) => {
+  const handleDeleteReview = async (reviewId) => {
     if (!user || !bookId) return;
-    dispatch({
-      type: 'DELETE_REVIEW',
-      payload: { bookId, reviewId }
-    });
+    try {
+      await apiService.deleteReview(reviewId);
+      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+    } catch (e) {
+      console.error('Failed to delete review', e);
+    }
   };
 
   const handleSubscribe = () => {
@@ -238,8 +264,9 @@ const BookDetails = () => {
                 <div className="book-details__description">
                   <h2>Описание</h2>
                   <p>
-                    Это демонстрационное описание книги «{book.title}». В реальном приложении сюда
-                    будет подставляться текст из базы данных или API.
+                    {book.description && book.description.trim().length > 0
+                      ? book.description
+                      : `Описание для книги «${book.title}» отсутствует.`}
                   </p>
                 </div>
                 <div className="book-details__subscribe">
