@@ -21,6 +21,7 @@ const Profile = () => {
       if (!user) return;
       try {
         setLoadingOrders(true);
+        setOrdersError(null);
         const data = await apiService.getUserOrders(user.id);
         const mapped = Array.isArray(data)
           ? data.map((o) => {
@@ -30,11 +31,14 @@ const Profile = () => {
               } catch {
                 items = [];
               }
+              // Формируем строку с названиями книг
+              const bookNames = items.map(item => item.title || 'Книга').join(', ');
               return {
                 id: o.id,
                 total: o.total_amount,
                 status: o.status || 'новый',
-                items
+                items,
+                bookNames
               };
             })
           : [];
@@ -47,7 +51,51 @@ const Profile = () => {
       }
     };
 
+    // Загружаем заказы сразу при монтировании компонента
     fetchOrders();
+
+    // Обновляем заказы при создании нового заказа
+    const handleOrderCreated = () => {
+      if (user) {
+        // Небольшая задержка, чтобы дать серверу время обработать заказ
+        setTimeout(() => {
+          fetchOrders();
+        }, 1000);
+      }
+    };
+    
+    // Обновляем при явном запросе обновления
+    const handleRefreshOrders = () => {
+      if (user) {
+        fetchOrders();
+      }
+    };
+    
+    // Также обновляем при фокусе на окне (если пользователь вернулся на вкладку)
+    const handleFocus = () => {
+      if (user) {
+        fetchOrders();
+      }
+    };
+    
+    // Обновляем при видимости страницы (когда пользователь переключается на вкладку)
+    const handleVisibilityChange = () => {
+      if (user && !document.hidden) {
+        fetchOrders();
+      }
+    };
+    
+    window.addEventListener('orderCreated', handleOrderCreated);
+    window.addEventListener('refreshOrders', handleRefreshOrders);
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      window.removeEventListener('orderCreated', handleOrderCreated);
+      window.removeEventListener('refreshOrders', handleRefreshOrders);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [user]);
 
   const getItemsCount = (items) =>
@@ -100,7 +148,7 @@ const Profile = () => {
                       {orders.map((order) => (
                         <tr key={order.id}>
                           <td>#{order.id}</td>
-                          <td>{getItemsCount(order.items)}</td>
+                          <td>{order.bookNames || `${getItemsCount(order.items)} товар(ов)`}</td>
                           <td>{formatPrice(order.total)}</td>
                           <td>{order.status}</td>
                         </tr>

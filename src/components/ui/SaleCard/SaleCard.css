@@ -1,5 +1,5 @@
 .sale-card {
-  background: var(--white);
+  background: linear-gradient(135deg, #11433D 0%, #1a5a52 100%);
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;

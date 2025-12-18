@@ -7,10 +7,12 @@ class ApiService {
   async request(endpoint, options = {}) {
     try {
       const url = `${this.baseURL}${endpoint}`;
+      const isPostRequest = options.method === 'POST' || options.method === 'PUT' || options.method === 'PATCH' || options.method === 'DELETE';
       const cacheKey = url + JSON.stringify(options);
       console.log('API Request to:', url); 
       
-      if (this.cache.has(cacheKey)) {
+      // Не кэшируем POST/PUT/PATCH/DELETE запросы
+      if (!isPostRequest && this.cache.has(cacheKey)) {
         return this.cache.get(cacheKey);
       }
 
@@ -23,11 +25,17 @@ class ApiService {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Неверный логин или пароль');
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      this.cache.set(cacheKey, data);
+      // Кэшируем только GET запросы
+      if (!isPostRequest) {
+        this.cache.set(cacheKey, data);
+      }
       return data;
     } catch (error) {
       console.error('API request failed:', error);
@@ -51,6 +59,13 @@ class ApiService {
     return this.request(`/books/${id}`);
   }
 
+  async createBook(book) {
+    return this.request('/books', {
+      method: 'POST',
+      body: JSON.stringify(book)
+    });
+  }
+
   async getBooksByCategory(category, params = {}) {
     const queryString = new URLSearchParams(params).toString();
     // В swagger путь /books/categories/{category}
@@ -68,23 +83,37 @@ class ApiService {
   async getSales() {
     // Используем /discounts/all и маппим к сущности Sale фронтенда
     const discounts = await this.request('/discounts/all');
-    return discounts.map((d) => ({
+    // Массив картинок для акций (используем разные картинки для разных акций)
+    const saleImages = [
+      '/project11a-web-the-seal-division/assets/images/sales/sale1.jpg',
+      '/project11a-web-the-seal-division/assets/images/sales/sale2.jpg',
+      '/project11a-web-the-seal-division/assets/images/sales/sale1.jpg', // fallback
+      '/project11a-web-the-seal-division/assets/images/sales/sale2.jpg'  // fallback
+    ];
+    return discounts.map((d, index) => ({
       id: d.id,
       title: d.title,
       description: d.description,
       percentage: d.percentage,
-      // Плейсхолдер-картинка для акций, т.к. API не возвращает изображение
-      image: '/project11a-web-the-seal-division/assets/images/sales/sale1.jpg'
+      // Используем разные картинки для разных акций
+      image: saleImages[index % saleImages.length] || saleImages[0]
     }));
   }
 
   // АВТОРИЗАЦИЯ / ПОЛЬЗОВАТЕЛИ
   async login(credentials) {
     // credentials: { email, password }
-    return this.request('/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    });
+    try {
+      return await this.request('/login', {
+        method: 'POST',
+        body: JSON.stringify(credentials)
+      });
+    } catch (error) {
+      if (error.message.includes('401') || error.message.includes('HTTP error! status: 401')) {
+        throw new Error('Неверный логин или пароль');
+      }
+      throw error;
+    }
   }
 
   async registerUser(user) {
@@ -113,10 +142,19 @@ class ApiService {
   }
 
   async updateOrderStatus(orderId, status) {
-    // Предполагаем поддержку частичного обновления статуса на бэке
+    // Получаем текущий заказ
+    const order = await this.request(`/orders/${orderId}`);
+    
+    // Обновляем статус в объекте заказа
+    const updatedOrder = {
+      ...order,
+      status: status
+    };
+    
+    // Отправляем PUT запрос для обновления заказа
     return this.request(`/orders/${orderId}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status })
+      method: 'PUT',
+      body: JSON.stringify(updatedOrder)
     });
   }
 

@@ -26,6 +26,35 @@ const Checkout = () => {
     [state.cart]
   );
 
+  // Валидация номера карты
+  const validateCardNumber = (card) => {
+    const cleaned = card.replace(/\s/g, '');
+    return /^\d{13,19}$/.test(cleaned);
+  };
+
+  // Валидация даты (MM/YY)
+  const validateExpiry = (exp) => {
+    const match = exp.match(/^(\d{2})\/(\d{2})$/);
+    if (!match) return false;
+    const month = parseInt(match[1], 10);
+    const year = parseInt(match[2], 10);
+    if (month < 1 || month > 12) return false;
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+    if (year < currentYear || (year === currentYear && month < currentMonth)) return false;
+    return true;
+  };
+
+  // Валидация CVV (строго 3 цифры)
+  const validateCVV = (cvv) => {
+    return /^\d{3}$/.test(cvv);
+  };
+
+  // Валидация адреса
+  const validateAddress = (addr) => {
+    return addr.trim().length >= 10;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -36,8 +65,29 @@ const Checkout = () => {
       return;
     }
 
-    if (!name || !cardNumber || !expiry || !cvv || !address) {
-      setError('Пожалуйста, заполните все обязательные поля.');
+    // Валидация всех полей
+    if (!name || !name.trim()) {
+      setError('Пожалуйста, введите имя на карте.');
+      return;
+    }
+
+    if (!cardNumber || !validateCardNumber(cardNumber)) {
+      setError('Пожалуйста, введите корректный номер карты (13-19 цифр).');
+      return;
+    }
+
+    if (!expiry || !validateExpiry(expiry)) {
+      setError('Пожалуйста, введите корректную дату действия карты (MM/YY).');
+      return;
+    }
+
+    if (!cvv || !validateCVV(cvv)) {
+      setError('Пожалуйста, введите корректный CVV код (3 цифры).');
+      return;
+    }
+
+    if (!address || !validateAddress(address)) {
+      setError('Пожалуйста, введите полный адрес доставки (минимум 10 символов).');
       return;
     }
 
@@ -53,9 +103,12 @@ const Checkout = () => {
       await addOrder(order);
       dispatch({ type: 'CLEAR_CART' });
       setSuccess('Оплата успешно выполнена. Заказ создан.');
+      // Отправляем событие для обновления заказов в Profile
+      window.dispatchEvent(new CustomEvent('orderCreated', { detail: { timestamp: Date.now() } }));
+      // Переходим на страницу профиля и даем время на обработку события
       setTimeout(() => {
         navigate('/profile');
-      }, 800);
+      }, 300);
     } catch (err) {
       console.error('Failed to create order:', err);
       setError('Не удалось оформить заказ. Попробуйте позже.');
@@ -95,8 +148,14 @@ const Checkout = () => {
                     id="card"
                     type="text"
                     value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
+                    onChange={(e) => {
+                      // Форматируем номер карты с пробелами
+                      const value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+                      const formatted = value.match(/.{1,4}/g)?.join(' ') || value;
+                      setCardNumber(formatted);
+                    }}
                     placeholder="0000 0000 0000 0000"
+                    maxLength={19}
                     required
                   />
                 </div>
@@ -107,8 +166,16 @@ const Checkout = () => {
                       id="expiry"
                       type="text"
                       value={expiry}
-                      onChange={(e) => setExpiry(e.target.value)}
+                      onChange={(e) => {
+                        // Форматируем дату MM/YY
+                        let value = e.target.value.replace(/\D/g, '');
+                        if (value.length >= 2) {
+                          value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                        }
+                        setExpiry(value);
+                      }}
                       placeholder="MM/YY"
+                      maxLength={5}
                       required
                     />
                   </div>
@@ -118,7 +185,12 @@ const Checkout = () => {
                       id="cvv"
                       type="password"
                       value={cvv}
-                      onChange={(e) => setCvv(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                        setCvv(value);
+                      }}
+                      placeholder="123"
+                      maxLength={3}
                       required
                     />
                   </div>

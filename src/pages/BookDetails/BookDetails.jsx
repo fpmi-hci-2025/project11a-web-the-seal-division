@@ -28,11 +28,17 @@ const BookDetails = () => {
       try {
         setLoading(true);
         const data = await apiService.getBookById(id);
+        const oldPriceValue = data.price;
+        const discountPercentage = parseFloat(data.discount?.percentage) || 0;
+        const newPrice = discountPercentage > 0 
+        ? oldPriceValue * (1 - discountPercentage / 100.0) 
+        : oldPriceValue;
+
         setBook({
           id: data.id,
           title: data.title,
           author: data.author,
-          price: data.price,
+          oldPrice: discountPercentage > 0 ? oldPriceValue : null,
           rating: Number(data.rating) || 0,
           category: data.category?.name || data.category || 'other',
           image:
@@ -42,6 +48,9 @@ const BookDetails = () => {
           topic: data.category?.name || '',
           description: data.description || '',
           preorder: Boolean(data.preorder),
+          availableDate: data.available_date || null,
+          discount: discountPercentage,
+          price: newPrice,
           inStock: true
         });
 
@@ -191,11 +200,18 @@ const BookDetails = () => {
       setTimeout(() => setSubscribeError(''), 3000);
       return;
     }
+    const isSubscribed = user.subscriptions?.includes(book.publisher);
     subscribeToPublisher(book.publisher);
-    setSubscribeMessage(`Вы подписались на новости издательства ${book.publisher}.`);
+    if (isSubscribed) {
+      setSubscribeMessage(`Вы отписались от новостей издательства ${book.publisher}.`);
+    } else {
+      setSubscribeMessage(`Вы подписались на новости издательства ${book.publisher}.`);
+    }
     setSubscribeError('');
     setTimeout(() => setSubscribeMessage(''), 2000);
   };
+  
+  const isSubscribed = book && user?.subscriptions?.includes(book.publisher);
 
   return (
     <div className="book-details-page">
@@ -224,7 +240,8 @@ const BookDetails = () => {
                   Тематика: <strong>{book.topic}</strong>
                 </p>
                 <p className="book-details__price">
-                  {book.oldPrice && Number(book.oldPrice) > Number(book.price) ? (
+                  {book.oldPrice && 
+                  Number(book.oldPrice) > Number(book.price) ? (
                     <>
                       <span className="book-details__price-old">
                         {formatPrice(Number(book.oldPrice))}
@@ -238,26 +255,26 @@ const BookDetails = () => {
                   )}
                 </p>
                 <p className="book-details__availability">
-                  {book.inStock
+                  {book.inStock && !book.preorder
                     ? 'В наличии'
                     : book.preorder
-                      ? 'Доступно для предзаказа'
+                      ? `Доступно для предзаказа${book.availableDate ? ` (с ${new Date(book.availableDate).toLocaleDateString('ru-RU')})` : ''}`
                       : 'Нет в наличии'}
                 </p>
                 <div className="book-details__actions">
-                  <button 
-                    className={`book-details__btn ${isInCart ? 'book-details__btn--in-cart' : ''}`}
-                    onClick={handleBuy}
-                  >
-                    {isInCart ? 'В корзине' : 'В корзину'}
-                  </button>
-                  {book.preorder && (
-                    <button
-                      type="button"
-                      className="book-details__btn book-details__btn--secondary"
+                  {book.preorder ? (
+                    <button 
+                      className={`book-details__btn ${isInCart ? 'book-details__btn--in-cart' : ''}`}
                       onClick={handlePreorder}
                     >
-                      Предзаказ
+                      {isInCart ? 'В корзине (предзаказ)' : 'Предзаказ'}
+                    </button>
+                  ) : (
+                    <button 
+                      className={`book-details__btn ${isInCart ? 'book-details__btn--in-cart' : ''}`}
+                      onClick={handleBuy}
+                    >
+                      {isInCart ? 'В корзине' : 'В корзину'}
                     </button>
                   )}
                 </div>
@@ -272,7 +289,7 @@ const BookDetails = () => {
                 <div className="book-details__subscribe">
                   <h3>Подписка на новости издательства</h3>
                   <button type="button" className="book-details__btn" onClick={handleSubscribe}>
-                    Подписаться на издательство
+                    {isSubscribed ? 'Отписаться от издательства' : 'Подписаться на издательство'}
                   </button>
                   {subscribeMessage && (
                     <div className="subscribe-form__success">{subscribeMessage}</div>

@@ -66,7 +66,25 @@ const Cart = () => {
                       <div className="cart-item__info">
                         <h3 className="cart-item__title">{item.title}</h3>
                         <p className="cart-item__author">{item.author}</p>
-                        <p className="cart-item__price">{formatPrice(item.price)}</p>
+                        <div className="cart-item__price">
+                          {(item.oldPrice && Number(item.oldPrice) > Number(item.price)) || (item.discount && item.discount > 0) ? (
+                            <>
+                              <span className="cart-item__price-old">
+                                {formatPrice(Number(item.oldPrice || item.price / (1 - item.discount / 100)))}
+                              </span>
+                              <span className="cart-item__price-new">
+                                {formatPrice(item.price)}
+                              </span>
+                            </>
+                          ) : (
+                            formatPrice(item.price)
+                          )}
+                        </div>
+                        {item.preorder && item.availableDate && (
+                          <p className="cart-item__availability">
+                            Доступно с: {new Date(item.availableDate).toLocaleDateString('ru-RU')}
+                          </p>
+                        )}
                       </div>
                       <div className="cart-item__actions">
                         <div className="quantity-controls">

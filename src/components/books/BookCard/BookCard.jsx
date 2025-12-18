@@ -52,14 +52,17 @@ const BookCard = ({ book }) => {
         <h4 className="book-card__title">{book.title}</h4>
         <p className="book-card__author">{book.author}</p>
         <div className="book-card__price">
-          {book.oldPrice && Number(book.oldPrice) > Number(book.price) ? (
+          {(book.oldPrice && Number(book.oldPrice) > Number(book.price)) || (book.discount && book.discount > 0) ? (
             <>
               <span className="book-card__price-old">
-                {formatPrice(Number(book.oldPrice))}
+                {formatPrice(Number(book.oldPrice || book.price / (1 - book.discount / 100)))}
               </span>
               <span className="book-card__price-new">
                 {formatPrice(Number(book.price))}
               </span>
+              {book.discount > 0 && (
+                <span className="book-card__discount-badge">-{Math.round(book.discount)}%</span>
+              )}
             </>
           ) : (
             formatPrice(Number(book.price))
