@@ -3,53 +3,63 @@ import Header from '../../components/common/Header/Header';
 import Footer from '../../components/common/Footer/Footer';
 import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import { formatPrice } from '../../utils/helpers';
+import { apiService } from '../../services/apiService';
 import './AdminOrders.css';
-
-const ORDERS_STORAGE_KEY = 'orders';
-
-const loadOrders = () => {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = window.localStorage.getItem(ORDERS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    console.error('Failed to load orders from storage', e);
-    return [];
-  }
-};
-
-const saveOrders = (orders) => {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-  } catch (e) {
-    console.error('Failed to save orders to storage', e);
-  }
-};
 
 const STATUS_OPTIONS = ['новый', 'в обработке', 'завершён'];
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const stored = loadOrders();
-    setOrders(stored);
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getAllOrders();
+        const mapped = Array.isArray(data)
+          ? data.map((o) => ({
+              id: o.id,
+              address: o.address,
+              total: o.total_amount,
+              status: o.status || 'новый',
+              itemsRaw: o.items,
+              user: o.user || null
+            }))
+          : [];
+        setOrders(mapped);
+      } catch (e) {
+        console.error('Failed to load orders from API', e);
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
   }, []);
 
-  const handleStatusChange = (index, newStatus) => {
-    setOrders((prev) => {
-      const updated = prev.map((order, i) =>
+  const handleStatusChange = async (index, newStatus) => {
+    setOrders((prev) =>
+      prev.map((order, i) =>
         i === index
           ? {
               ...order,
               status: newStatus
             }
           : order
-      );
-      saveOrders(updated);
-      return updated;
-    });
+      )
+    );
+
+    const order = orders[index];
+    if (!order) return;
+
+    try {
+      await apiService.updateOrderStatus(order.id, newStatus);
+    } catch (e) {
+      console.error('Failed to update order status', e);
+    }
   };
 
   return (
@@ -67,7 +77,12 @@ const AdminOrders = () => {
           <section className="admin-orders-section">
             <h1 className="page-title">Администрирование заказов</h1>
 
-            {orders.length === 0 ? (
+            {loading && <p className="admin-orders__empty">Загрузка заказов...</p>}
+            {error && !orders.length && (
+              <p className="admin-orders__empty">Не удалось загрузить заказы.</p>
+            )}
+
+            {orders.length === 0 && !loading ? (
               <p className="admin-orders__empty">
                 Заказов пока нет. Они появятся здесь после оформления заказов пользователями.
               </p>
@@ -87,25 +102,29 @@ const AdminOrders = () => {
                   </thead>
                   <tbody>
                     {orders.map((order, index) => {
-                      const date = order.orderDate || order.date;
-                      const total = order.total || order.totalPrice;
-                      const items = order.items || [];
+                      let items = [];
+                      try {
+                        items = order.itemsRaw ? JSON.parse(order.itemsRaw) : [];
+                      } catch (error) {
+                        console.error('Failed to update order status', error.message || error);
+                        items = [];
+                      }
                       const itemsCount = items.reduce(
                         (sum, item) => sum + (item.quantity || 1),
                         0
                       );
 
                       return (
-                        <tr key={order.orderNumber || order.id || index}>
-                          <td>{order.orderNumber || order.id || index + 1}</td>
+                        <tr key={order.id || index}>
+                          <td>{order.id || index + 1}</td>
+                          <td>—</td>
                           <td>
-                            {date
-                              ? new Date(date).toLocaleString('ru-RU')
+                            {order.user
+                              ? `${order.user.first_name || ''} ${order.user.last_name || ''}`.trim()
                               : '—'}
                           </td>
-                          <td>{order.customerName || order.firstName || '—'}</td>
-                          <td>{order.customerEmail || order.email || '—'}</td>
-                          <td>{total ? formatPrice(total) : '—'}</td>
+                          <td>{order.user ? order.user.email : '—'}</td>
+                          <td>{order.total ? formatPrice(order.total) : '—'}</td>
                           <td>{itemsCount}</td>
                           <td>
                             <select
