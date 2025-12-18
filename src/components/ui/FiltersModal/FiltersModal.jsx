@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useCategories } from '../../../hooks/api/useCategories';
 import './FiltersModal.css';
 
 const FiltersModal = ({ isOpen, onClose, onApplyFilters }) => {
+  const { categories, loading: categoriesLoading } = useCategories();
+  
+  // Инициализируем фильтры категорий на основе данных из API
   const [filters, setFilters] = useState({
-    categories: {
-      new: true,
-      classic: true,
-      fantasy: true,
-      detective: false,
-      romance: false
-    },
+    categories: {},
     priceRange: {
       min: '',
       max: ''
@@ -20,6 +18,21 @@ const FiltersModal = ({ isOpen, onClose, onApplyFilters }) => {
       preOrder: false
     }
   });
+
+  // Инициализируем категории из API при загрузке
+  useEffect(() => {
+    if (categories.length > 0) {
+      const initialCategories = {};
+      categories.forEach(cat => {
+        const categoryName = cat.name || cat;
+        initialCategories[categoryName] = true; // По умолчанию все категории выбраны
+      });
+      setFilters(prev => ({
+        ...prev,
+        categories: initialCategories
+      }));
+    }
+  }, [categories]);
 
   const handleCategoryChange = (category) => {
     setFilters(prev => ({
@@ -64,14 +77,13 @@ const FiltersModal = ({ isOpen, onClose, onApplyFilters }) => {
   };
 
   const handleReset = () => {
+    const resetCategories = {};
+    categories.forEach(cat => {
+      const categoryName = cat.name || cat;
+      resetCategories[categoryName] = true;
+    });
     setFilters({
-      categories: {
-        new: true,
-        classic: true,
-        fantasy: true,
-        detective: false,
-        romance: false
-      },
+      categories: resetCategories,
       priceRange: {
         min: '',
         max: ''
@@ -100,19 +112,29 @@ const FiltersModal = ({ isOpen, onClose, onApplyFilters }) => {
           {/* Категории */}
           <div className="filters-section">
             <h3 className="filters-section__title">Категории</h3>
-            <div className="filters-checkbox">
-              {Object.entries(filters.categories).map(([category, checked]) => (
-                <label key={category} className="filter-label">
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => handleCategoryChange(category)}
-                  />
-                  <span className="checkmark"></span>
-                  {getCategoryName(category)}
-                </label>
-              ))}
-            </div>
+            {categoriesLoading ? (
+              <p>Загрузка категорий...</p>
+            ) : categories.length === 0 ? (
+              <p>Категории не найдены</p>
+            ) : (
+              <div className="filters-checkbox">
+                {categories.map((cat) => {
+                  const categoryName = cat.name || cat;
+                  const checked = filters.categories[categoryName] || false;
+                  return (
+                    <label key={cat.id || categoryName} className="filter-label">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => handleCategoryChange(categoryName)}
+                      />
+                      <span className="checkmark"></span>
+                      {categoryName}
+                    </label>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Цена */}
@@ -227,18 +249,6 @@ const FiltersModal = ({ isOpen, onClose, onApplyFilters }) => {
       </div>
     </div>
   );
-};
-
-// Вспомогательная функция для отображения названий категорий
-const getCategoryName = (category) => {
-  const names = {
-    new: 'Новинки',
-    classic: 'Классика',
-    fantasy: 'Фантастика',
-    detective: 'Детективы',
-    romance: 'Романы'
-  };
-  return names[category] || category;
 };
 
 export default FiltersModal;

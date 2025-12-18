@@ -4,6 +4,7 @@ import Footer from '../../components/common/Footer/Footer';
 import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import { useBookContext } from '../../context/useBookContext';
 import { useAuth } from '../../context/AuthContext';
+import { apiService } from '../../services/apiService';
 import './AdminAddBook.css';
 
 const AdminAddBook = () => {
@@ -26,12 +27,12 @@ const AdminAddBook = () => {
   const [publisher, setPublisher] = useState('');
   const [topic, setTopic] = useState('');
   const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newBook = {
-      id: Date.now(),
       title,
       author,
       isbn: isbn || null,
@@ -40,46 +41,50 @@ const AdminAddBook = () => {
       description: description || '',
       page_count: pageCount ? Number(pageCount) : null,
       preorder,
-      availability_date: availabilityDate || null,
+      available_date: availabilityDate || null,
       language: language || 'Русский',
       in_stock: inStock ? Number(inStock) : 0,
-      cover_image: coverImage || null,
-      category,
-      publisher: publisher || 'Мир Книг',
-      topic: topic || 'Разное',
-      rating: 5,
-      image: coverImage || '/project11a-web-the-seal-division/assets/images/books/new1.png'
+      link: coverImage || null,
+      category_id: 1,
+      publisher_id: 1,
+      rating: 5
     };
 
-    dispatch({
-      type: 'SET_BOOKS',
-      payload: [...state.books, newBook]
-    });
+    try {
+      const createdBook = await apiService.createBook(newBook);
+      setSuccess('Книга успешно добавлена в базу данных.');
+      
+      if (user && user.subscriptions && user.subscriptions.includes(publisher || 'Мир Книг')) {
+        addNotification({
+          id: Date.now(),
+          text: `Новая книга от издательства ${publisher || 'Мир Книг'}: «${title}».`,
+          date: new Date().toISOString(),
+          read: false
+        });
+      }
 
-    if (user && user.subscriptions && user.subscriptions.includes(newBook.publisher)) {
-      addNotification({
-        id: Date.now(),
-        text: `Новая книга от издательства ${newBook.publisher}: «${newBook.title}».`,
-        date: new Date().toISOString(),
-        read: false
-      });
+      setTitle('');
+      setAuthor('');
+      setIsbn('');
+      setPublicationDate('');
+      setPrice('');
+      setDescription('');
+      setPageCount('');
+      setPreorder(false);
+      setAvailabilityDate('');
+      setLanguage('Русский');
+      setInStock('0');
+      setCoverImage('');
+      setPublisher('');
+      setTopic('');
+
+      window.dispatchEvent(new CustomEvent('booksUpdated'));
+    } catch (err) {
+      console.error('Failed to create book:', err);
+      setSuccess('');
+      setError('Не удалось добавить книгу. Попробуйте позже.');
+      setTimeout(() => setError(''), 5000);
     }
-
-    setSuccess('Книга успешно добавлена (локально, без сохранения в БД).');
-    setTitle('');
-    setAuthor('');
-    setIsbn('');
-    setPublicationDate('');
-    setPrice('');
-    setDescription('');
-    setPageCount('');
-    setPreorder(false);
-    setAvailabilityDate('');
-    setLanguage('Русский');
-    setInStock('0');
-    setCoverImage('');
-    setPublisher('');
-    setTopic('');
   };
 
   return (
@@ -181,6 +186,8 @@ const AdminAddBook = () => {
                     <option value="new">Новинки</option>
                     <option value="classic">Классика</option>
                     <option value="fantasy">Фантастика</option>
+                    <option value="bestsellers">Бестселлеры</option>
+                    <option value="detectives">Детективы</option>
                   </select>
                 </div>
                 <div className="admin-book-form__field admin-book-form__field--checkbox">
@@ -259,6 +266,7 @@ const AdminAddBook = () => {
                 />
               </div>
               {success && <div className="admin-book-form__success">{success}</div>}
+              {error && <div className="admin-book-form__error">{error}</div>}
               <button type="submit" className="admin-book-form__submit">
                 Добавить книгу
               </button>

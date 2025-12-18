@@ -1,19 +1,30 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../../services/apiService';
 
-const mapBookFromApi = (book) => ({
-  id: book.id,
-  title: book.title,
-  author: book.author,
-  price: book.price,
-  rating: Number(book.rating) || 0,
-  category: book.category?.name || book.category || 'other',
-  image: book.link || '/project11a-web-the-seal-division/assets/images/books/new1.png',
-  publisher: book.publisher?.name || book.publisher || '',
-  topic: book.category?.name || '',
-  preorder: Boolean(book.preorder),
-  inStock: true
-});
+const mapBookFromApi = (book) => {
+  const oldPrice = book.price;
+  const discountPercentage = parseFloat(book.discount?.percentage) || 0;
+  const newPrice = discountPercentage > 0 
+    ? oldPrice * (1 - discountPercentage / 100.0) 
+    : oldPrice;
+
+  return {
+    id: book.id,
+    title: book.title,
+    author: book.author,
+    price: newPrice,
+    oldPrice: discountPercentage > 0 ? oldPrice : null,
+    discount: discountPercentage,
+    rating: Number(book.rating) || 0,
+    category: book.category?.name || book.category || 'other',
+    image: book.link || '/project11a-web-the-seal-division/assets/images/books/new1.png',
+    publisher: book.publisher?.name || book.publisher || '',
+    topic: book.category?.name || '',
+    preorder: Boolean(book.preorder),
+    availableDate: book.available_date || null,
+    inStock: true
+  };
+};
 
 export const useBooks = (category) => {
   const [books, setBooks] = useState([]);

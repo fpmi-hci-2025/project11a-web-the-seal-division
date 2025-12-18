@@ -41,24 +41,56 @@ const AdminOrders = () => {
   }, []);
 
   const handleStatusChange = async (index, newStatus) => {
-    setOrders((prev) =>
-      prev.map((order, i) =>
-        i === index
-          ? {
-              ...order,
-              status: newStatus
-            }
-          : order
-      )
-    );
-
     const order = orders[index];
     if (!order) return;
 
+    const oldStatus = order.status;
+
+    // Оптимистичное обновление UI
+    setOrders((prev) =>
+      prev.map((o, i) =>
+        i === index
+          ? {
+              ...o,
+              status: newStatus
+            }
+          : o
+      )
+    );
+
     try {
-      await apiService.updateOrderStatus(order.id, newStatus);
+      // Отправляем PUT запрос для обновления статуса заказа
+      const updatedOrder = await apiService.updateOrderStatus(order.id, newStatus);
+      
+      // Обновляем состояние на основе ответа от сервера
+      if (updatedOrder && updatedOrder.status) {
+        setOrders((prev) =>
+          prev.map((o, i) =>
+            i === index
+              ? {
+                  ...o,
+                  status: updatedOrder.status
+                }
+              : o
+          )
+        );
+      }
+      
+      setError(null);
     } catch (e) {
       console.error('Failed to update order status', e);
+      // Откатываем изменение при ошибке
+      setOrders((prev) =>
+        prev.map((o, i) =>
+          i === index
+            ? {
+                ...o,
+                status: oldStatus // Возвращаем старый статус
+              }
+            : o
+        )
+      );
+      setError(`Не удалось обновить статус заказа: ${e.message}`);
     }
   };
 

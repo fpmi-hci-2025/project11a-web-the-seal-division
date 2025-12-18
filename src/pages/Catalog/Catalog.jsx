@@ -5,6 +5,7 @@ import Footer from '../../components/common/Footer/Footer';
 import Breadcrumbs from '../../components/common/Breadcrumbs/Breadcrumbs';
 import BookCard from '../../components/books/BookCard/BookCard';
 import { apiService } from '../../services/apiService';
+import { useCategories } from '../../hooks/api/useCategories';
 import './Catalog.css';
 
 const Catalog = () => {
@@ -13,6 +14,7 @@ const Catalog = () => {
   const [allBooks, setAllBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { categories } = useCategories();
 
   const query = useMemo(() => new URLSearchParams(location.search), [location.search]);
 
@@ -32,6 +34,9 @@ const Catalog = () => {
     .split(',')
     .map((c) => c.trim())
     .filter(Boolean);
+  
+  // Используем названия категорий напрямую из API
+  const activeCategoryNames = activeCategories;
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -40,21 +45,32 @@ const Catalog = () => {
         const data = await apiService.getAllBooks();
         setAllBooks(
           Array.isArray(data)
-            ? data.map((book) => ({
-                id: book.id,
-                title: book.title,
-                author: book.author,
-                price: book.price,
-                rating: Number(book.rating) || 0,
-                category: book.category?.name || book.category || 'other',
-                image:
-                  book.link ||
-                  '/project11a-web-the-seal-division/assets/images/books/new1.png',
-                publisher: book.publisher?.name || book.publisher || '',
-                topic: book.category?.name || '',
-                preorder: Boolean(book.preorder),
-                inStock: true
-              }))
+            ? data.map((book) => {
+                const oldPrice = book.price;
+                const discountPercentage = parseFloat(book.discount?.percentage) || 0;
+                const newPrice = discountPercentage > 0 
+                  ? oldPrice * (1 - discountPercentage / 100.0) 
+                  : oldPrice;
+
+                return {
+                  id: book.id,
+                  title: book.title,
+                  author: book.author,
+                  price: newPrice,
+                  oldPrice: discountPercentage > 0 ? oldPrice : null,
+                  discount: discountPercentage,
+                  rating: Number(book.rating) || 0,
+                  category: book.category?.name || book.category || 'other',
+                  image:
+                    book.link ||
+                    '/project11a-web-the-seal-division/assets/images/books/new1.png',
+                  publisher: book.publisher?.name || book.publisher || '',
+                  topic: book.category?.name || '',
+                  preorder: Boolean(book.preorder),
+                  availableDate: book.available_date || null,
+                  inStock: true
+                };
+              })
             : []
         );
       } catch (e) {
@@ -66,12 +82,31 @@ const Catalog = () => {
     };
 
     fetchAll();
+
+    // Обновляем книги при событии обновления
+    const handleBooksUpdated = () => {
+      fetchAll();
+    };
+    window.addEventListener('booksUpdated', handleBooksUpdated);
+    return () => {
+      window.removeEventListener('booksUpdated', handleBooksUpdated);
+    };
   }, []);
 
   const filteredBooks = useMemo(() => {
     return allBooks.filter((book) => {
-      if (activeCategories.length && !activeCategories.includes(book.category)) {
-        return false;
+      // Фильтрация по категориям - используем названия категорий напрямую из API
+      if (activeCategoryNames.length > 0) {
+        const bookCategory = book.category || '';
+        const matchesCategory = activeCategoryNames.some((catName) => {
+          // Сравниваем по точному совпадению или по частичному совпадению (без учета регистра)
+          return bookCategory.toLowerCase() === catName.toLowerCase() || 
+                 bookCategory.toLowerCase().includes(catName.toLowerCase()) ||
+                 catName.toLowerCase().includes(bookCategory.toLowerCase());
+        });
+        if (!matchesCategory) {
+          return false;
+        }
       }
 
       const price = Number(book.price);
@@ -80,8 +115,18 @@ const Catalog = () => {
 
       if (rating && Number(book.rating) < Number(rating)) return false;
 
-      if (inStock && !book.inStock) return false;
-      if (preOrder && !book.preorder) return false;
+      // Фильтрация по наличию
+      // Если выбраны ОБА фильтра - показываем все книги (не фильтруем)
+      // Если выбран только "В наличии" - показываем только те, что не на предзаказе
+      // Если выбран только "Предзаказ" - показываем только те, что на предзаказе
+      if (inStock && !preOrder) {
+        // Только "В наличии" выбрано - исключаем предзаказы
+        if (book.preorder) return false;
+      } else if (preOrder && !inStock) {
+        // Только "Предзаказ" выбран - показываем только предзаказы
+        if (!book.preorder) return false;
+      }
+      // Если выбраны оба или ничего не выбрано - показываем все книги
 
       if (search.trim()) {
         const term = search.toLowerCase();
@@ -100,7 +145,7 @@ const Catalog = () => {
 
       return true;
     });
-  }, [allBooks, activeCategories, maxPrice, minPrice, preOrder, rating, inStock, search]);
+  }, [allBooks, activeCategories, activeCategoryNames, maxPrice, minPrice, preOrder, rating, inStock, search]);
 
   const handleResetFilters = () => {
     navigate('/catalog');
