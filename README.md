@@ -2,7 +2,7 @@
 
 Этот репозиторий содержит веб-составляющую проекта "Книжный онлайн-магазин".
 
-[![GitHub Pages Status](https://img.shields.io/badge/GitHub%20Pages-live-blue)](https://github.com/fpmi-hci-2025/project11a-web-the-seal-division)
+[![GitHub Pages Status](https://img.shields.io/badge/GitHub%20Pages-live-blue)](https://fpmi-hci-2025.github.io/project11a-web-the-seal-division/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-yellow)](https://www.ecma-international.org/publications-and-standards/standards/ecma-262/)
 [![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
 
